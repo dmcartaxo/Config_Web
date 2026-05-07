@@ -446,12 +446,13 @@ namespace Config_Web
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(882, 643);
+            this.ClientSize = new System.Drawing.Size(882, 541);
             this.Controls.Add(this.lblFileLabel);
             this.Controls.Add(this.txtConfigPath);
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.tabControl);
-            this.MinimumSize = new System.Drawing.Size(898, 682);
+            this.MaximizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(898, 580);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Config Web  —  Configurador de Web.Config para IIS";

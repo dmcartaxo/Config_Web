@@ -16,6 +16,8 @@ namespace Config_Web
         public MainForm()
         {
             InitializeComponent();
+            // Carrega o icone embutido no executavel (definido via ApplicationIcon no .csproj)
+            this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         }
 
         // ─── Arquivo ──────────────────────────────────────────────────────────────
