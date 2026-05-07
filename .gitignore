@@ -1,0 +1,24 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio cache/options
+.vs/
+*.ncb
+*.opendb
+*.sdf
+
+# NuGet
+packages/
+*.nupkg
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Arquivos de exemplo com dados sensiveis
+Exemplo/
