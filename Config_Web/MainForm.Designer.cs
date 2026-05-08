@@ -39,7 +39,6 @@ namespace Config_Web
             this.btnAddUpdate          = new System.Windows.Forms.Button();
             this.btnRemove             = new System.Windows.Forms.Button();
             this.btnTestConnection     = new System.Windows.Forms.Button();
-            this.btnSaveCS             = new System.Windows.Forms.Button();
             this.chkEncryptCS          = new System.Windows.Forms.CheckBox();
 
             // API Config tab
@@ -49,7 +48,6 @@ namespace Config_Web
             this.txtApiKey             = new System.Windows.Forms.TextBox();
             this.lblApiKeyLength       = new System.Windows.Forms.Label();
             this.btnGenerateKey        = new System.Windows.Forms.Button();
-            this.btnSaveApi            = new System.Windows.Forms.Button();
             this.chkEncryptApi         = new System.Windows.Forms.CheckBox();
 
             // ── SuspendLayout ───────────────────────────────────────────────────────
@@ -124,7 +122,6 @@ namespace Config_Web
             this.tabConnectionStrings.Controls.Add(this.btnAddUpdate);
             this.tabConnectionStrings.Controls.Add(this.btnRemove);
             this.tabConnectionStrings.Controls.Add(this.btnTestConnection);
-            this.tabConnectionStrings.Controls.Add(this.btnSaveCS);
             this.tabConnectionStrings.Controls.Add(this.chkEncryptCS);
             this.tabConnectionStrings.Location  = new System.Drawing.Point(4, 22);
             this.tabConnectionStrings.Name      = "tabConnectionStrings";
@@ -221,18 +218,6 @@ namespace Config_Web
             this.btnTestConnection.UseVisualStyleBackColor = true;
             this.btnTestConnection.Click    += new System.EventHandler(this.btnTestConnection_Click);
 
-            // btnSaveCS
-            this.btnSaveCS.BackColor  = System.Drawing.Color.FromArgb(0, 122, 204);
-            this.btnSaveCS.ForeColor  = System.Drawing.Color.White;
-            this.btnSaveCS.Font       = new System.Drawing.Font("Microsoft Sans Serif", 8.25f, System.Drawing.FontStyle.Bold);
-            this.btnSaveCS.Location   = new System.Drawing.Point(667, 382);
-            this.btnSaveCS.Name       = "btnSaveCS";
-            this.btnSaveCS.Size       = new System.Drawing.Size(175, 30);
-            this.btnSaveCS.TabIndex   = 5;
-            this.btnSaveCS.Text       = "Salvar no Temporario";
-            this.btnSaveCS.UseVisualStyleBackColor = false;
-            this.btnSaveCS.Click     += new System.EventHandler(this.btnSaveCS_Click);
-
             // chkEncryptCS
             this.chkEncryptCS.AutoSize  = true;
             this.chkEncryptCS.Location  = new System.Drawing.Point(8, 422);
@@ -248,7 +233,6 @@ namespace Config_Web
             this.tabApiConfig.Controls.Add(this.txtApiKey);
             this.tabApiConfig.Controls.Add(this.lblApiKeyLength);
             this.tabApiConfig.Controls.Add(this.btnGenerateKey);
-            this.tabApiConfig.Controls.Add(this.btnSaveApi);
             this.tabApiConfig.Controls.Add(this.chkEncryptApi);
             this.tabApiConfig.Location  = new System.Drawing.Point(4, 22);
             this.tabApiConfig.Name      = "tabApiConfig";
@@ -305,18 +289,6 @@ namespace Config_Web
             this.btnGenerateKey.Text      = "Gerar Nova Chave (128 chars)";
             this.btnGenerateKey.UseVisualStyleBackColor = true;
             this.btnGenerateKey.Click    += new System.EventHandler(this.btnGenerateKey_Click);
-
-            // btnSaveApi
-            this.btnSaveApi.BackColor  = System.Drawing.Color.FromArgb(0, 122, 204);
-            this.btnSaveApi.ForeColor  = System.Drawing.Color.White;
-            this.btnSaveApi.Font       = new System.Drawing.Font("Microsoft Sans Serif", 8.25f, System.Drawing.FontStyle.Bold);
-            this.btnSaveApi.Location   = new System.Drawing.Point(667, 150);
-            this.btnSaveApi.Name       = "btnSaveApi";
-            this.btnSaveApi.Size       = new System.Drawing.Size(175, 30);
-            this.btnSaveApi.TabIndex   = 2;
-            this.btnSaveApi.Text       = "Salvar no Temporario";
-            this.btnSaveApi.UseVisualStyleBackColor = false;
-            this.btnSaveApi.Click     += new System.EventHandler(this.btnSaveApi_Click);
 
             // chkEncryptApi
             this.chkEncryptApi.AutoSize  = true;
@@ -391,7 +363,6 @@ namespace Config_Web
         private System.Windows.Forms.Button   btnAddUpdate;
         private System.Windows.Forms.Button   btnRemove;
         private System.Windows.Forms.Button   btnTestConnection;
-        private System.Windows.Forms.Button   btnSaveCS;
         private System.Windows.Forms.CheckBox chkEncryptCS;
 
         private System.Windows.Forms.Panel    pnlApiWarning;
@@ -400,7 +371,6 @@ namespace Config_Web
         private System.Windows.Forms.TextBox  txtApiKey;
         private System.Windows.Forms.Label    lblApiKeyLength;
         private System.Windows.Forms.Button   btnGenerateKey;
-        private System.Windows.Forms.Button   btnSaveApi;
         private System.Windows.Forms.CheckBox chkEncryptApi;
     }
 }

@@ -148,7 +148,6 @@ namespace Config_Web
             btnAddUpdate.Enabled        = editable;
             btnRemove.Enabled           = editable;
             btnTestConnection.Enabled   = editable;
-            btnSaveCS.Enabled           = editable;
             chkEncryptCS.Enabled        = editable;
         }
 
@@ -236,14 +235,14 @@ namespace Config_Web
                 existing.ConnectionString = parsed.ConnectionString;
                 existing.ProviderName     = parsed.ProviderName;
                 MessageBox.Show(
-                    string.Format("Conexao '{0}' atualizada na lista.\nClique em Salvar para gravar no arquivo temporario.", parsed.Name),
+                    string.Format("Conexao '{0}' atualizada na lista.", parsed.Name),
                     "Atualizado", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
                 _connectionStrings.Add(parsed);
                 MessageBox.Show(
-                    string.Format("Conexao '{0}' adicionada na lista.\nClique em Salvar para gravar no arquivo temporario.", parsed.Name),
+                    string.Format("Conexao '{0}' adicionada na lista.", parsed.Name),
                     "Adicionado", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
@@ -334,32 +333,6 @@ namespace Config_Web
             }
         }
 
-        private void btnSaveCS_Click(object sender, EventArgs e)
-        {
-            if (_connectionStrings.Count == 0)
-            {
-                MessageBox.Show(
-                    "Deve haver pelo menos uma conexao registrada.",
-                    "Validacao", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            try
-            {
-                _service.SaveConnectionStrings(_connectionStrings);
-                MessageBox.Show(
-                    "Connection Strings salvas no arquivo temporario.\n" +
-                    "Clique em 'Salvar no Arquivo Selecionado' para aplicar ao arquivo original.",
-                    "Salvo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    "Erro ao salvar:\n" + ex.Message,
-                    "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
         // ─── Aba: API Config ──────────────────────────────────────────────────────
 
         private void RefreshApiConfigTab()
@@ -390,7 +363,6 @@ namespace Config_Web
         {
             txtApiKey.Enabled      = editable;
             btnGenerateKey.Enabled = editable;
-            btnSaveApi.Enabled     = editable;
             chkEncryptApi.Enabled  = editable;
         }
 
@@ -413,11 +385,23 @@ namespace Config_Web
             lblApiKeyLength.ForeColor = (len == 128) ? Color.DarkGreen : Color.DimGray;
         }
 
-        private void btnSaveApi_Click(object sender, EventArgs e)
-        {
-            string key = txtApiKey.Text.Trim();
+        // ─── Gravar no arquivo original ───────────────────────────────────────────
 
-            if (string.IsNullOrEmpty(key))
+        private void btnSalvarOriginal_Click(object sender, EventArgs e)
+        {
+            if (!HasFile()) return;
+
+            // Valida antes de confirmar
+            if (!_service.IsSectionEncrypted("connectionStrings") && _connectionStrings.Count == 0)
+            {
+                MessageBox.Show(
+                    "Deve haver pelo menos uma conexao registrada.",
+                    "Validacao", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string apiKey = txtApiKey.Text.Trim();
+            if (!_service.IsSectionEncrypted("apiConfig") && string.IsNullOrEmpty(apiKey))
             {
                 MessageBox.Show(
                     "A chave API nao pode ser vazia.",
@@ -425,38 +409,16 @@ namespace Config_Web
                 return;
             }
 
-            try
-            {
-                _service.SaveApiKey(key);
-                MessageBox.Show(
-                    "Chave API salva no arquivo temporario.\n" +
-                    "Clique em 'Salvar no Arquivo Selecionado' para aplicar ao arquivo original.",
-                    "Salvo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    "Erro ao salvar:\n" + ex.Message,
-                    "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        // ─── Gravar no arquivo original ───────────────────────────────────────────
-
-        private void btnSalvarOriginal_Click(object sender, EventArgs e)
-        {
-            if (!HasFile()) return;
-
             DialogResult confirm = MessageBox.Show(
                 string.Format(
-                    "Gravar o arquivo temporario sobre o arquivo selecionado?\n\n" +
+                    "Gravar no arquivo selecionado?\n\n" +
                     "Destino: {0}\n\n" +
                     "Criptografia ao gravar:\n" +
                     "  Connection Strings : {1}\n" +
                     "  API Config         : {2}",
                     _originalFilePath,
-                    chkEncryptCS.Checked  ? "Sera criptografada"      : "Nao sera criptografada",
-                    chkEncryptApi.Checked ? "Sera criptografada"      : "Nao sera criptografada"),
+                    chkEncryptCS.Checked  ? "Sera criptografada" : "Nao sera criptografada",
+                    chkEncryptApi.Checked ? "Sera criptografada" : "Nao sera criptografada"),
                 "Confirmar Gravacao", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (confirm != DialogResult.Yes) return;
@@ -464,8 +426,17 @@ namespace Config_Web
             Cursor = Cursors.WaitCursor;
             try
             {
+                // Persiste dados no arquivo temporario antes de copiar
+                if (!_service.IsSectionEncrypted("connectionStrings"))
+                    _service.SaveConnectionStrings(_connectionStrings);
+
+                if (!_service.IsSectionEncrypted("apiConfig") && !string.IsNullOrEmpty(apiKey))
+                    _service.SaveApiKey(apiKey);
+
+                // Copia temporario sobre o arquivo original
                 File.Copy(_service.FilePath, _originalFilePath, true);
 
+                // Criptografa secoes no original conforme checkboxes
                 if (chkEncryptCS.Checked || chkEncryptApi.Checked)
                 {
                     EncryptionService encSvc = new EncryptionService(
