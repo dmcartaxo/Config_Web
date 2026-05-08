@@ -334,6 +334,7 @@ namespace Config_Web
             this.Controls.Add(this.txtTempFile);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.btnSalvarOriginal);
+            this.Icon                 = System.Drawing.Icon.ExtractAssociatedIcon(System.Windows.Forms.Application.ExecutablePath);
             this.MinimumSize          = new System.Drawing.Size(898, 631);
             this.Name                 = "MainForm";
             this.StartPosition        = System.Windows.Forms.FormStartPosition.CenterScreen;
