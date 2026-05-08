@@ -11,13 +11,14 @@ namespace Config_Web
     public partial class MainForm : Form
     {
         private WebConfigService _service;
+        private string _originalFilePath;
+        private string _tempFolderPath;
         private List<ConnectionStringEntry> _connectionStrings = new List<ConnectionStringEntry>();
 
         public MainForm()
         {
             InitializeComponent();
-            // Carrega o icone embutido no executavel (definido via ApplicationIcon no .csproj)
-            this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+            this.FormClosed += new FormClosedEventHandler(MainForm_FormClosed);
         }
 
         // ─── Arquivo ──────────────────────────────────────────────────────────────
@@ -39,13 +40,52 @@ namespace Config_Web
         {
             try
             {
-                _service = new WebConfigService(filePath);
-                txtConfigPath.Text = filePath;
-                tabControl.Enabled = true;
+                CleanupTempFolder();
+
+                string tempFilePath = WebConfigService.CreateTempFile(filePath);
+                _originalFilePath = filePath;
+                _tempFolderPath   = Path.GetDirectoryName(tempFilePath);
+
+                // Verifica estado de criptografia na copia (igual ao original)
+                WebConfigService tempCheck = new WebConfigService(tempFilePath);
+                bool csWasEncrypted  = tempCheck.IsSectionEncrypted("connectionStrings");
+                bool apiWasEncrypted = tempCheck.IsSectionEncrypted("apiConfig");
+
+                // Tenta descriptografar secoes no arquivo temporario
+                if (csWasEncrypted || apiWasEncrypted)
+                {
+                    EncryptionService encSvc = new EncryptionService(_tempFolderPath);
+
+                    if (csWasEncrypted)
+                    {
+                        try { encSvc.Decrypt("connectionStrings"); }
+                        catch { /* mantém criptografado se falhar (maquina diferente) */ }
+                    }
+
+                    if (apiWasEncrypted)
+                    {
+                        try { encSvc.Decrypt("apiConfig"); }
+                        catch { /* mantém criptografado se falhar */ }
+                    }
+                }
+
+                _service = new WebConfigService(tempFilePath);
+
+                txtConfigPath.Text        = filePath;
+                txtTempFile.Text          = tempFilePath;
+                tabControl.Enabled        = true;
+                btnSalvarOriginal.Enabled = true;
+
+                // Checkbox marcado = secao estava criptografada e foi descriptografada
+                // = deve ser re-criptografada ao gravar no arquivo original
+                bool csStillEncrypted  = _service.IsSectionEncrypted("connectionStrings");
+                bool apiStillEncrypted = _service.IsSectionEncrypted("apiConfig");
+
+                chkEncryptCS.Checked  = csWasEncrypted  && !csStillEncrypted;
+                chkEncryptApi.Checked = apiWasEncrypted && !apiStillEncrypted;
 
                 RefreshConnectionStringsTab();
                 RefreshApiConfigTab();
-                RefreshEncryptionTab();
             }
             catch (Exception ex)
             {
@@ -53,6 +93,21 @@ namespace Config_Web
                     "Erro ao carregar o arquivo:\n" + ex.Message,
                     "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void CleanupTempFolder()
+        {
+            if (!string.IsNullOrEmpty(_tempFolderPath) && Directory.Exists(_tempFolderPath))
+            {
+                try { Directory.Delete(_tempFolderPath, true); }
+                catch { }
+                _tempFolderPath = null;
+            }
+        }
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            CleanupTempFolder();
         }
 
         private bool HasFile()
@@ -88,12 +143,13 @@ namespace Config_Web
 
         private void SetConnectionStringsEditable(bool editable)
         {
-            lvConnections.Enabled      = editable;
+            lvConnections.Enabled       = editable;
             txtConnectionString.Enabled = editable;
-            btnAddUpdate.Enabled       = editable;
-            btnRemove.Enabled          = editable;
-            btnTestConnection.Enabled  = editable;
-            btnSaveCS.Enabled          = editable;
+            btnAddUpdate.Enabled        = editable;
+            btnRemove.Enabled           = editable;
+            btnTestConnection.Enabled   = editable;
+            btnSaveCS.Enabled           = editable;
+            chkEncryptCS.Enabled        = editable;
         }
 
         private void RebuildConnectionListView()
@@ -180,14 +236,14 @@ namespace Config_Web
                 existing.ConnectionString = parsed.ConnectionString;
                 existing.ProviderName     = parsed.ProviderName;
                 MessageBox.Show(
-                    string.Format("Conexao '{0}' atualizada na lista.\nClique em Salvar para gravar no arquivo.", parsed.Name),
+                    string.Format("Conexao '{0}' atualizada na lista.\nClique em Salvar para gravar no arquivo temporario.", parsed.Name),
                     "Atualizado", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
                 _connectionStrings.Add(parsed);
                 MessageBox.Show(
-                    string.Format("Conexao '{0}' adicionada na lista.\nClique em Salvar para gravar no arquivo.", parsed.Name),
+                    string.Format("Conexao '{0}' adicionada na lista.\nClique em Salvar para gravar no arquivo temporario.", parsed.Name),
                     "Adicionado", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
@@ -197,7 +253,6 @@ namespace Config_Web
 
         private ConnectionStringEntry ParseConnectionStringXml(string xml)
         {
-            // Envolve em uma tag raiz para formar XML valido
             XmlDocument doc = new XmlDocument();
             doc.LoadXml("<root>" + xml + "</root>");
 
@@ -293,9 +348,9 @@ namespace Config_Web
             {
                 _service.SaveConnectionStrings(_connectionStrings);
                 MessageBox.Show(
-                    "Connection Strings salvas com sucesso.",
+                    "Connection Strings salvas no arquivo temporario.\n" +
+                    "Clique em 'Salvar no Arquivo Selecionado' para aplicar ao arquivo original.",
                     "Salvo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                RefreshEncryptionTab();
             }
             catch (Exception ex)
             {
@@ -336,6 +391,7 @@ namespace Config_Web
             txtApiKey.Enabled      = editable;
             btnGenerateKey.Enabled = editable;
             btnSaveApi.Enabled     = editable;
+            chkEncryptApi.Enabled  = editable;
         }
 
         private void btnGenerateKey_Click(object sender, EventArgs e)
@@ -373,9 +429,9 @@ namespace Config_Web
             {
                 _service.SaveApiKey(key);
                 MessageBox.Show(
-                    "Chave API salva com sucesso.",
+                    "Chave API salva no arquivo temporario.\n" +
+                    "Clique em 'Salvar no Arquivo Selecionado' para aplicar ao arquivo original.",
                     "Salvo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                RefreshEncryptionTab();
             }
             catch (Exception ex)
             {
@@ -385,94 +441,51 @@ namespace Config_Web
             }
         }
 
-        // ─── Aba: Criptografia ────────────────────────────────────────────────────
+        // ─── Gravar no arquivo original ───────────────────────────────────────────
 
-        private void RefreshEncryptionTab()
+        private void btnSalvarOriginal_Click(object sender, EventArgs e)
         {
             if (!HasFile()) return;
-
-            UpdateEncryptionStatus("connectionStrings", lblCsEncStatus, btnEncryptCS, btnDecryptCS);
-            UpdateEncryptionStatus("apiConfig",         lblApiEncStatus, btnEncryptApi, btnDecryptApi);
-        }
-
-        private void UpdateEncryptionStatus(
-            string sectionName,
-            System.Windows.Forms.Label statusLabel,
-            Button btnEncrypt,
-            Button btnDecrypt)
-        {
-            bool encrypted = _service.IsSectionEncrypted(sectionName);
-
-            if (encrypted)
-            {
-                statusLabel.Text      = "Status: CRIPTOGRAFADA  [bloqueada]";
-                statusLabel.ForeColor = Color.DarkRed;
-            }
-            else
-            {
-                statusLabel.Text      = "Status: Descriptografada  [aberta]";
-                statusLabel.ForeColor = Color.DarkGreen;
-            }
-
-            btnEncrypt.Enabled = !encrypted;
-            btnDecrypt.Enabled =  encrypted;
-        }
-
-        private void btnEncryptCS_Click(object sender, EventArgs e)
-        {
-            ToggleEncryption("connectionStrings", true);
-        }
-
-        private void btnDecryptCS_Click(object sender, EventArgs e)
-        {
-            ToggleEncryption("connectionStrings", false);
-        }
-
-        private void btnEncryptApi_Click(object sender, EventArgs e)
-        {
-            ToggleEncryption("apiConfig", true);
-        }
-
-        private void btnDecryptApi_Click(object sender, EventArgs e)
-        {
-            ToggleEncryption("apiConfig", false);
-        }
-
-        private void ToggleEncryption(string sectionName, bool encrypt)
-        {
-            if (!HasFile()) return;
-
-            string action = encrypt ? "criptografar" : "descriptografar";
 
             DialogResult confirm = MessageBox.Show(
-                string.Format("Deseja {0} a secao '{1}'?\n\nEsta operacao utilizara o aspnet_regiis.exe.", action, sectionName),
-                "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                string.Format(
+                    "Gravar o arquivo temporario sobre o arquivo selecionado?\n\n" +
+                    "Destino: {0}\n\n" +
+                    "Criptografia ao gravar:\n" +
+                    "  Connection Strings : {1}\n" +
+                    "  API Config         : {2}",
+                    _originalFilePath,
+                    chkEncryptCS.Checked  ? "Sera criptografada"      : "Nao sera criptografada",
+                    chkEncryptApi.Checked ? "Sera criptografada"      : "Nao sera criptografada"),
+                "Confirmar Gravacao", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (confirm != DialogResult.Yes) return;
 
             Cursor = Cursors.WaitCursor;
             try
             {
-                EncryptionService svc = new EncryptionService(_service.FolderPath);
+                File.Copy(_service.FilePath, _originalFilePath, true);
 
-                if (encrypt)
-                    svc.Encrypt(sectionName);
-                else
-                    svc.Decrypt(sectionName);
+                if (chkEncryptCS.Checked || chkEncryptApi.Checked)
+                {
+                    EncryptionService encSvc = new EncryptionService(
+                        Path.GetDirectoryName(_originalFilePath));
+
+                    if (chkEncryptCS.Checked)
+                        encSvc.Encrypt("connectionStrings");
+
+                    if (chkEncryptApi.Checked)
+                        encSvc.Encrypt("apiConfig");
+                }
 
                 MessageBox.Show(
-                    string.Format("Secao '{0}' {1}ada com sucesso.", sectionName, action),
+                    "Arquivo salvo com sucesso em:\n" + _originalFilePath,
                     "Concluido", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                // Atualiza todas as abas pois o estado do arquivo mudou
-                RefreshEncryptionTab();
-                RefreshConnectionStringsTab();
-                RefreshApiConfigTab();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    string.Format("Erro ao {0} a secao '{1}':\n\n{2}", action, sectionName, ex.Message),
+                    "Erro ao salvar no arquivo original:\n" + ex.Message,
                     "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
