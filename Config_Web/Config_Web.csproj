@@ -44,6 +44,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiKeyGenerator.cs" />
+    <Compile Include="ConnectionBuilderForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConnectionBuilderForm.Designer.cs">
+      <DependentUpon>ConnectionBuilderForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="ConnectionStringEntry.cs" />
     <Compile Include="DatabaseTestService.cs" />
     <Compile Include="EncryptionService.cs" />

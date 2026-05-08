@@ -39,6 +39,7 @@ namespace Config_Web
             this.btnAddUpdate          = new System.Windows.Forms.Button();
             this.btnRemove             = new System.Windows.Forms.Button();
             this.btnTestConnection     = new System.Windows.Forms.Button();
+            this.btnBuilderCS          = new System.Windows.Forms.Button();
             this.chkEncryptCS          = new System.Windows.Forms.CheckBox();
 
             // API Config tab
@@ -108,7 +109,7 @@ namespace Config_Web
             this.tabControl.Location       = new System.Drawing.Point(12, 66);
             this.tabControl.Name           = "tabControl";
             this.tabControl.SelectedIndex  = 0;
-            this.tabControl.Size           = new System.Drawing.Size(858, 585);
+            this.tabControl.Size           = new System.Drawing.Size(858, 470);
             this.tabControl.TabIndex       = 2;
 
             // ────────────────────────────────────────────────────────────────────────
@@ -122,6 +123,7 @@ namespace Config_Web
             this.tabConnectionStrings.Controls.Add(this.btnAddUpdate);
             this.tabConnectionStrings.Controls.Add(this.btnRemove);
             this.tabConnectionStrings.Controls.Add(this.btnTestConnection);
+            this.tabConnectionStrings.Controls.Add(this.btnBuilderCS);
             this.tabConnectionStrings.Controls.Add(this.chkEncryptCS);
             this.tabConnectionStrings.Location  = new System.Drawing.Point(4, 22);
             this.tabConnectionStrings.Name      = "tabConnectionStrings";
@@ -186,13 +188,13 @@ namespace Config_Web
             this.txtConnectionString.Location    = new System.Drawing.Point(6, 304);
             this.txtConnectionString.Multiline   = true;
             this.txtConnectionString.Name        = "txtConnectionString";
-            this.txtConnectionString.ScrollBars  = System.Windows.Forms.ScrollBars.Both;
-            this.txtConnectionString.Size        = new System.Drawing.Size(836, 68);
+            this.txtConnectionString.ScrollBars  = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtConnectionString.Size        = new System.Drawing.Size(836, 60);
             this.txtConnectionString.TabIndex    = 1;
-            this.txtConnectionString.WordWrap    = false;
+            this.txtConnectionString.WordWrap    = true;
 
             // btnAddUpdate
-            this.btnAddUpdate.Location  = new System.Drawing.Point(6, 382);
+            this.btnAddUpdate.Location  = new System.Drawing.Point(6, 374);
             this.btnAddUpdate.Name      = "btnAddUpdate";
             this.btnAddUpdate.Size      = new System.Drawing.Size(175, 30);
             this.btnAddUpdate.TabIndex  = 2;
@@ -201,7 +203,7 @@ namespace Config_Web
             this.btnAddUpdate.Click    += new System.EventHandler(this.btnAddUpdate_Click);
 
             // btnRemove
-            this.btnRemove.Location  = new System.Drawing.Point(191, 382);
+            this.btnRemove.Location  = new System.Drawing.Point(191, 374);
             this.btnRemove.Name      = "btnRemove";
             this.btnRemove.Size      = new System.Drawing.Size(175, 30);
             this.btnRemove.TabIndex  = 3;
@@ -210,7 +212,7 @@ namespace Config_Web
             this.btnRemove.Click    += new System.EventHandler(this.btnRemove_Click);
 
             // btnTestConnection
-            this.btnTestConnection.Location  = new System.Drawing.Point(376, 382);
+            this.btnTestConnection.Location  = new System.Drawing.Point(376, 374);
             this.btnTestConnection.Name      = "btnTestConnection";
             this.btnTestConnection.Size      = new System.Drawing.Size(175, 30);
             this.btnTestConnection.TabIndex  = 4;
@@ -218,9 +220,18 @@ namespace Config_Web
             this.btnTestConnection.UseVisualStyleBackColor = true;
             this.btnTestConnection.Click    += new System.EventHandler(this.btnTestConnection_Click);
 
+            // btnBuilderCS
+            this.btnBuilderCS.Location  = new System.Drawing.Point(561, 374);
+            this.btnBuilderCS.Name      = "btnBuilderCS";
+            this.btnBuilderCS.Size      = new System.Drawing.Size(275, 30);
+            this.btnBuilderCS.TabIndex  = 5;
+            this.btnBuilderCS.Text      = "Montar Connection String...";
+            this.btnBuilderCS.UseVisualStyleBackColor = true;
+            this.btnBuilderCS.Click    += new System.EventHandler(this.btnBuilderCS_Click);
+
             // chkEncryptCS
             this.chkEncryptCS.AutoSize  = true;
-            this.chkEncryptCS.Location  = new System.Drawing.Point(8, 422);
+            this.chkEncryptCS.Location  = new System.Drawing.Point(8, 414);
             this.chkEncryptCS.Name      = "chkEncryptCS";
             this.chkEncryptCS.TabIndex  = 6;
             this.chkEncryptCS.Text      = "Criptografar secao 'connectionStrings' ao salvar no arquivo original";
@@ -269,10 +280,10 @@ namespace Config_Web
             this.txtApiKey.Location    = new System.Drawing.Point(6, 66);
             this.txtApiKey.Multiline   = true;
             this.txtApiKey.Name        = "txtApiKey";
-            this.txtApiKey.ScrollBars  = System.Windows.Forms.ScrollBars.Horizontal;
+            this.txtApiKey.ScrollBars  = System.Windows.Forms.ScrollBars.Vertical;
             this.txtApiKey.Size        = new System.Drawing.Size(836, 46);
             this.txtApiKey.TabIndex    = 0;
-            this.txtApiKey.WordWrap    = false;
+            this.txtApiKey.WordWrap    = true;
             this.txtApiKey.TextChanged += new System.EventHandler(this.txtApiKey_TextChanged);
 
             // lblApiKeyLength
@@ -301,7 +312,7 @@ namespace Config_Web
             this.btnSalvarOriginal.BackColor  = System.Drawing.Color.FromArgb(0, 128, 0);
             this.btnSalvarOriginal.ForeColor  = System.Drawing.Color.White;
             this.btnSalvarOriginal.Font       = new System.Drawing.Font("Microsoft Sans Serif", 9f, System.Drawing.FontStyle.Bold);
-            this.btnSalvarOriginal.Location   = new System.Drawing.Point(12, 659);
+            this.btnSalvarOriginal.Location   = new System.Drawing.Point(12, 545);
             this.btnSalvarOriginal.Name       = "btnSalvarOriginal";
             this.btnSalvarOriginal.Size       = new System.Drawing.Size(858, 35);
             this.btnSalvarOriginal.TabIndex   = 3;
@@ -313,7 +324,9 @@ namespace Config_Web
             // ── MainForm ─────────────────────────────────────────────────────────────
             this.AutoScaleDimensions  = new System.Drawing.SizeF(6f, 13f);
             this.AutoScaleMode        = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize           = new System.Drawing.Size(882, 706);
+            this.ClientSize           = new System.Drawing.Size(882, 592);
+            this.FormBorderStyle      = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox          = false;
             this.Controls.Add(this.lblFileLabel);
             this.Controls.Add(this.txtConfigPath);
             this.Controls.Add(this.btnBrowse);
@@ -321,7 +334,7 @@ namespace Config_Web
             this.Controls.Add(this.txtTempFile);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.btnSalvarOriginal);
-            this.MinimumSize          = new System.Drawing.Size(898, 745);
+            this.MinimumSize          = new System.Drawing.Size(898, 631);
             this.Name                 = "MainForm";
             this.StartPosition        = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text                 = "Config Web  —  Configurador de Web.Config para IIS";
@@ -363,6 +376,7 @@ namespace Config_Web
         private System.Windows.Forms.Button   btnAddUpdate;
         private System.Windows.Forms.Button   btnRemove;
         private System.Windows.Forms.Button   btnTestConnection;
+        private System.Windows.Forms.Button   btnBuilderCS;
         private System.Windows.Forms.CheckBox chkEncryptCS;
 
         private System.Windows.Forms.Panel    pnlApiWarning;

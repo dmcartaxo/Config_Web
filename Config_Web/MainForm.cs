@@ -148,6 +148,7 @@ namespace Config_Web
             btnAddUpdate.Enabled        = editable;
             btnRemove.Enabled           = editable;
             btnTestConnection.Enabled   = editable;
+            btnBuilderCS.Enabled        = editable;
             chkEncryptCS.Enabled        = editable;
         }
 
@@ -298,6 +299,15 @@ namespace Config_Web
                 _connectionStrings.Remove(entry);
                 RebuildConnectionListView();
                 txtConnectionString.Clear();
+            }
+        }
+
+        private void btnBuilderCS_Click(object sender, EventArgs e)
+        {
+            using (ConnectionBuilderForm dlg = new ConnectionBuilderForm())
+            {
+                if (dlg.ShowDialog(this) == DialogResult.OK)
+                    txtConnectionString.Text = dlg.ResultXml;
             }
         }
 
