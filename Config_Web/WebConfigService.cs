@@ -30,6 +30,15 @@ namespace Config_Web
             FilePath = filePath;
         }
 
+        public static string CreateTempFile(string originalPath)
+        {
+            string tempDir = Path.Combine(Path.GetTempPath(), "ConfigWeb_" + Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(tempDir);
+            string tempFile = Path.Combine(tempDir, "web.config");
+            File.Copy(originalPath, tempFile, true);
+            return tempFile;
+        }
+
         // ─── Verificacao de criptografia ──────────────────────────────────────────
 
         public bool IsSectionEncrypted(string sectionName)

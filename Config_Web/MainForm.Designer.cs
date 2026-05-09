@@ -19,10 +19,12 @@ namespace Config_Web
             this.lblFileLabel          = new System.Windows.Forms.Label();
             this.txtConfigPath         = new System.Windows.Forms.TextBox();
             this.btnBrowse             = new System.Windows.Forms.Button();
+            this.lblTempFileLabel      = new System.Windows.Forms.Label();
+            this.txtTempFile           = new System.Windows.Forms.TextBox();
             this.tabControl            = new System.Windows.Forms.TabControl();
             this.tabConnectionStrings  = new System.Windows.Forms.TabPage();
             this.tabApiConfig          = new System.Windows.Forms.TabPage();
-            this.tabEncryption         = new System.Windows.Forms.TabPage();
+            this.btnSalvarOriginal     = new System.Windows.Forms.Button();
 
             // Connection Strings tab
             this.pnlCsWarning          = new System.Windows.Forms.Panel();
@@ -37,7 +39,8 @@ namespace Config_Web
             this.btnAddUpdate          = new System.Windows.Forms.Button();
             this.btnRemove             = new System.Windows.Forms.Button();
             this.btnTestConnection     = new System.Windows.Forms.Button();
-            this.btnSaveCS             = new System.Windows.Forms.Button();
+            this.btnBuilderCS          = new System.Windows.Forms.Button();
+            this.chkEncryptCS          = new System.Windows.Forms.CheckBox();
 
             // API Config tab
             this.pnlApiWarning         = new System.Windows.Forms.Panel();
@@ -46,27 +49,14 @@ namespace Config_Web
             this.txtApiKey             = new System.Windows.Forms.TextBox();
             this.lblApiKeyLength       = new System.Windows.Forms.Label();
             this.btnGenerateKey        = new System.Windows.Forms.Button();
-            this.btnSaveApi            = new System.Windows.Forms.Button();
-
-            // Encryption tab
-            this.grpCsEncryption       = new System.Windows.Forms.GroupBox();
-            this.lblCsEncStatus        = new System.Windows.Forms.Label();
-            this.btnEncryptCS          = new System.Windows.Forms.Button();
-            this.btnDecryptCS          = new System.Windows.Forms.Button();
-            this.grpApiEncryption      = new System.Windows.Forms.GroupBox();
-            this.lblApiEncStatus       = new System.Windows.Forms.Label();
-            this.btnEncryptApi         = new System.Windows.Forms.Button();
-            this.btnDecryptApi         = new System.Windows.Forms.Button();
+            this.chkEncryptApi         = new System.Windows.Forms.CheckBox();
 
             // ── SuspendLayout ───────────────────────────────────────────────────────
             this.tabControl.SuspendLayout();
             this.tabConnectionStrings.SuspendLayout();
             this.tabApiConfig.SuspendLayout();
-            this.tabEncryption.SuspendLayout();
             this.pnlCsWarning.SuspendLayout();
             this.pnlApiWarning.SuspendLayout();
-            this.grpCsEncryption.SuspendLayout();
-            this.grpApiEncryption.SuspendLayout();
             this.SuspendLayout();
 
             // ── lblFileLabel ────────────────────────────────────────────────────────
@@ -93,15 +83,33 @@ namespace Config_Web
             this.btnBrowse.UseVisualStyleBackColor = true;
             this.btnBrowse.Click    += new System.EventHandler(this.btnBrowse_Click);
 
+            // ── lblTempFileLabel ────────────────────────────────────────────────────
+            this.lblTempFileLabel.AutoSize = true;
+            this.lblTempFileLabel.Location = new System.Drawing.Point(12, 42);
+            this.lblTempFileLabel.Name     = "lblTempFileLabel";
+            this.lblTempFileLabel.Text     = "Arquivo temporario:";
+            this.lblTempFileLabel.ForeColor = System.Drawing.Color.DimGray;
+
+            // ── txtTempFile ─────────────────────────────────────────────────────────
+            this.txtTempFile.BackColor   = System.Drawing.SystemColors.Control;
+            this.txtTempFile.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtTempFile.Font        = new System.Drawing.Font("Courier New", 7.5f);
+            this.txtTempFile.ForeColor   = System.Drawing.Color.DimGray;
+            this.txtTempFile.Location    = new System.Drawing.Point(135, 41);
+            this.txtTempFile.Name        = "txtTempFile";
+            this.txtTempFile.ReadOnly    = true;
+            this.txtTempFile.Size        = new System.Drawing.Size(735, 17);
+            this.txtTempFile.TabIndex    = 0;
+            this.txtTempFile.TabStop     = false;
+
             // ── tabControl ──────────────────────────────────────────────────────────
             this.tabControl.Controls.Add(this.tabConnectionStrings);
             this.tabControl.Controls.Add(this.tabApiConfig);
-            this.tabControl.Controls.Add(this.tabEncryption);
             this.tabControl.Enabled        = false;
-            this.tabControl.Location       = new System.Drawing.Point(12, 46);
+            this.tabControl.Location       = new System.Drawing.Point(12, 66);
             this.tabControl.Name           = "tabControl";
             this.tabControl.SelectedIndex  = 0;
-            this.tabControl.Size           = new System.Drawing.Size(858, 585);
+            this.tabControl.Size           = new System.Drawing.Size(858, 470);
             this.tabControl.TabIndex       = 2;
 
             // ────────────────────────────────────────────────────────────────────────
@@ -115,7 +123,8 @@ namespace Config_Web
             this.tabConnectionStrings.Controls.Add(this.btnAddUpdate);
             this.tabConnectionStrings.Controls.Add(this.btnRemove);
             this.tabConnectionStrings.Controls.Add(this.btnTestConnection);
-            this.tabConnectionStrings.Controls.Add(this.btnSaveCS);
+            this.tabConnectionStrings.Controls.Add(this.btnBuilderCS);
+            this.tabConnectionStrings.Controls.Add(this.chkEncryptCS);
             this.tabConnectionStrings.Location  = new System.Drawing.Point(4, 22);
             this.tabConnectionStrings.Name      = "tabConnectionStrings";
             this.tabConnectionStrings.Padding   = new System.Windows.Forms.Padding(3);
@@ -123,7 +132,7 @@ namespace Config_Web
             this.tabConnectionStrings.TabIndex  = 0;
             this.tabConnectionStrings.Text      = "  Connection Strings  ";
 
-            // pnlCsWarning  (faixa amarela - visivel apenas quando criptografada)
+            // pnlCsWarning  (faixa amarela - visivel apenas quando descriptografia falha)
             this.pnlCsWarning.BackColor    = System.Drawing.Color.FromArgb(255, 248, 195);
             this.pnlCsWarning.BorderStyle  = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnlCsWarning.Controls.Add(this.lblCsWarning);
@@ -136,7 +145,7 @@ namespace Config_Web
             this.lblCsWarning.Dock        = System.Windows.Forms.DockStyle.Fill;
             this.lblCsWarning.ForeColor   = System.Drawing.Color.FromArgb(180, 90, 0);
             this.lblCsWarning.Font        = new System.Drawing.Font("Microsoft Sans Serif", 8.25f, System.Drawing.FontStyle.Bold);
-            this.lblCsWarning.Text        = "  [!]  Secao 'connectionStrings' CRIPTOGRAFADA  —  Acesse a aba Criptografia para descriptografar antes de editar.";
+            this.lblCsWarning.Text        = "  [!]  Secao 'connectionStrings' CRIPTOGRAFADA  —  Nao foi possivel descriptografar. O arquivo pode ter sido criptografado em outra maquina.";
             this.lblCsWarning.TextAlign   = System.Drawing.ContentAlignment.MiddleLeft;
 
             // lblConnectionsList
@@ -179,13 +188,13 @@ namespace Config_Web
             this.txtConnectionString.Location    = new System.Drawing.Point(6, 304);
             this.txtConnectionString.Multiline   = true;
             this.txtConnectionString.Name        = "txtConnectionString";
-            this.txtConnectionString.ScrollBars  = System.Windows.Forms.ScrollBars.Both;
-            this.txtConnectionString.Size        = new System.Drawing.Size(836, 68);
+            this.txtConnectionString.ScrollBars  = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtConnectionString.Size        = new System.Drawing.Size(836, 60);
             this.txtConnectionString.TabIndex    = 1;
-            this.txtConnectionString.WordWrap    = false;
+            this.txtConnectionString.WordWrap    = true;
 
             // btnAddUpdate
-            this.btnAddUpdate.Location  = new System.Drawing.Point(6, 382);
+            this.btnAddUpdate.Location  = new System.Drawing.Point(6, 374);
             this.btnAddUpdate.Name      = "btnAddUpdate";
             this.btnAddUpdate.Size      = new System.Drawing.Size(175, 30);
             this.btnAddUpdate.TabIndex  = 2;
@@ -194,7 +203,7 @@ namespace Config_Web
             this.btnAddUpdate.Click    += new System.EventHandler(this.btnAddUpdate_Click);
 
             // btnRemove
-            this.btnRemove.Location  = new System.Drawing.Point(191, 382);
+            this.btnRemove.Location  = new System.Drawing.Point(191, 374);
             this.btnRemove.Name      = "btnRemove";
             this.btnRemove.Size      = new System.Drawing.Size(175, 30);
             this.btnRemove.TabIndex  = 3;
@@ -203,7 +212,7 @@ namespace Config_Web
             this.btnRemove.Click    += new System.EventHandler(this.btnRemove_Click);
 
             // btnTestConnection
-            this.btnTestConnection.Location  = new System.Drawing.Point(376, 382);
+            this.btnTestConnection.Location  = new System.Drawing.Point(376, 374);
             this.btnTestConnection.Name      = "btnTestConnection";
             this.btnTestConnection.Size      = new System.Drawing.Size(175, 30);
             this.btnTestConnection.TabIndex  = 4;
@@ -211,17 +220,21 @@ namespace Config_Web
             this.btnTestConnection.UseVisualStyleBackColor = true;
             this.btnTestConnection.Click    += new System.EventHandler(this.btnTestConnection_Click);
 
-            // btnSaveCS
-            this.btnSaveCS.BackColor  = System.Drawing.Color.FromArgb(0, 122, 204);
-            this.btnSaveCS.ForeColor  = System.Drawing.Color.White;
-            this.btnSaveCS.Font       = new System.Drawing.Font("Microsoft Sans Serif", 8.25f, System.Drawing.FontStyle.Bold);
-            this.btnSaveCS.Location   = new System.Drawing.Point(667, 382);
-            this.btnSaveCS.Name       = "btnSaveCS";
-            this.btnSaveCS.Size       = new System.Drawing.Size(175, 30);
-            this.btnSaveCS.TabIndex   = 5;
-            this.btnSaveCS.Text       = "Salvar";
-            this.btnSaveCS.UseVisualStyleBackColor = false;
-            this.btnSaveCS.Click     += new System.EventHandler(this.btnSaveCS_Click);
+            // btnBuilderCS
+            this.btnBuilderCS.Location  = new System.Drawing.Point(561, 374);
+            this.btnBuilderCS.Name      = "btnBuilderCS";
+            this.btnBuilderCS.Size      = new System.Drawing.Size(275, 30);
+            this.btnBuilderCS.TabIndex  = 5;
+            this.btnBuilderCS.Text      = "Montar Connection String...";
+            this.btnBuilderCS.UseVisualStyleBackColor = true;
+            this.btnBuilderCS.Click    += new System.EventHandler(this.btnBuilderCS_Click);
+
+            // chkEncryptCS
+            this.chkEncryptCS.AutoSize  = true;
+            this.chkEncryptCS.Location  = new System.Drawing.Point(8, 414);
+            this.chkEncryptCS.Name      = "chkEncryptCS";
+            this.chkEncryptCS.TabIndex  = 6;
+            this.chkEncryptCS.Text      = "Criptografar secao 'connectionStrings' ao salvar no arquivo original";
 
             // ────────────────────────────────────────────────────────────────────────
             // tabApiConfig
@@ -231,7 +244,7 @@ namespace Config_Web
             this.tabApiConfig.Controls.Add(this.txtApiKey);
             this.tabApiConfig.Controls.Add(this.lblApiKeyLength);
             this.tabApiConfig.Controls.Add(this.btnGenerateKey);
-            this.tabApiConfig.Controls.Add(this.btnSaveApi);
+            this.tabApiConfig.Controls.Add(this.chkEncryptApi);
             this.tabApiConfig.Location  = new System.Drawing.Point(4, 22);
             this.tabApiConfig.Name      = "tabApiConfig";
             this.tabApiConfig.Padding   = new System.Windows.Forms.Padding(3);
@@ -252,7 +265,7 @@ namespace Config_Web
             this.lblApiWarning.Dock        = System.Windows.Forms.DockStyle.Fill;
             this.lblApiWarning.ForeColor   = System.Drawing.Color.FromArgb(180, 90, 0);
             this.lblApiWarning.Font        = new System.Drawing.Font("Microsoft Sans Serif", 8.25f, System.Drawing.FontStyle.Bold);
-            this.lblApiWarning.Text        = "  [!]  Secao 'apiConfig' CRIPTOGRAFADA  —  Acesse a aba Criptografia para descriptografar antes de editar.";
+            this.lblApiWarning.Text        = "  [!]  Secao 'apiConfig' CRIPTOGRAFADA  —  Nao foi possivel descriptografar. O arquivo pode ter sido criptografado em outra maquina.";
             this.lblApiWarning.TextAlign   = System.Drawing.ContentAlignment.MiddleLeft;
 
             // lblApiKeyLabel
@@ -267,10 +280,10 @@ namespace Config_Web
             this.txtApiKey.Location    = new System.Drawing.Point(6, 66);
             this.txtApiKey.Multiline   = true;
             this.txtApiKey.Name        = "txtApiKey";
-            this.txtApiKey.ScrollBars  = System.Windows.Forms.ScrollBars.Horizontal;
+            this.txtApiKey.ScrollBars  = System.Windows.Forms.ScrollBars.Vertical;
             this.txtApiKey.Size        = new System.Drawing.Size(836, 46);
             this.txtApiKey.TabIndex    = 0;
-            this.txtApiKey.WordWrap    = false;
+            this.txtApiKey.WordWrap    = true;
             this.txtApiKey.TextChanged += new System.EventHandler(this.txtApiKey_TextChanged);
 
             // lblApiKeyLength
@@ -288,117 +301,46 @@ namespace Config_Web
             this.btnGenerateKey.UseVisualStyleBackColor = true;
             this.btnGenerateKey.Click    += new System.EventHandler(this.btnGenerateKey_Click);
 
-            // btnSaveApi
-            this.btnSaveApi.BackColor  = System.Drawing.Color.FromArgb(0, 122, 204);
-            this.btnSaveApi.ForeColor  = System.Drawing.Color.White;
-            this.btnSaveApi.Font       = new System.Drawing.Font("Microsoft Sans Serif", 8.25f, System.Drawing.FontStyle.Bold);
-            this.btnSaveApi.Location   = new System.Drawing.Point(667, 150);
-            this.btnSaveApi.Name       = "btnSaveApi";
-            this.btnSaveApi.Size       = new System.Drawing.Size(175, 30);
-            this.btnSaveApi.TabIndex   = 2;
-            this.btnSaveApi.Text       = "Salvar";
-            this.btnSaveApi.UseVisualStyleBackColor = false;
-            this.btnSaveApi.Click     += new System.EventHandler(this.btnSaveApi_Click);
+            // chkEncryptApi
+            this.chkEncryptApi.AutoSize  = true;
+            this.chkEncryptApi.Location  = new System.Drawing.Point(8, 190);
+            this.chkEncryptApi.Name      = "chkEncryptApi";
+            this.chkEncryptApi.TabIndex  = 3;
+            this.chkEncryptApi.Text      = "Criptografar secao 'apiConfig' ao salvar no arquivo original";
 
-            // ────────────────────────────────────────────────────────────────────────
-            // tabEncryption
-            // ────────────────────────────────────────────────────────────────────────
-            this.tabEncryption.Controls.Add(this.grpCsEncryption);
-            this.tabEncryption.Controls.Add(this.grpApiEncryption);
-            this.tabEncryption.Location  = new System.Drawing.Point(4, 22);
-            this.tabEncryption.Name      = "tabEncryption";
-            this.tabEncryption.Padding   = new System.Windows.Forms.Padding(3);
-            this.tabEncryption.Size      = new System.Drawing.Size(850, 559);
-            this.tabEncryption.TabIndex  = 2;
-            this.tabEncryption.Text      = "  Criptografia  ";
-
-            // grpCsEncryption
-            this.grpCsEncryption.Controls.Add(this.lblCsEncStatus);
-            this.grpCsEncryption.Controls.Add(this.btnEncryptCS);
-            this.grpCsEncryption.Controls.Add(this.btnDecryptCS);
-            this.grpCsEncryption.Font      = new System.Drawing.Font("Microsoft Sans Serif", 8.25f, System.Drawing.FontStyle.Bold);
-            this.grpCsEncryption.Location  = new System.Drawing.Point(8, 8);
-            this.grpCsEncryption.Name      = "grpCsEncryption";
-            this.grpCsEncryption.Size      = new System.Drawing.Size(834, 105);
-            this.grpCsEncryption.TabIndex  = 0;
-            this.grpCsEncryption.Text      = " Secao: connectionStrings ";
-
-            this.lblCsEncStatus.AutoSize  = false;
-            this.lblCsEncStatus.Font      = new System.Drawing.Font("Microsoft Sans Serif", 9f, System.Drawing.FontStyle.Bold);
-            this.lblCsEncStatus.Location  = new System.Drawing.Point(10, 25);
-            this.lblCsEncStatus.Name      = "lblCsEncStatus";
-            this.lblCsEncStatus.Size      = new System.Drawing.Size(810, 20);
-            this.lblCsEncStatus.Text      = "Status: Selecione um arquivo Web.Config";
-
-            this.btnEncryptCS.Location  = new System.Drawing.Point(10, 58);
-            this.btnEncryptCS.Name      = "btnEncryptCS";
-            this.btnEncryptCS.Size      = new System.Drawing.Size(175, 30);
-            this.btnEncryptCS.Font      = new System.Drawing.Font("Microsoft Sans Serif", 8.25f, System.Drawing.FontStyle.Regular);
-            this.btnEncryptCS.Text      = "Criptografar";
-            this.btnEncryptCS.UseVisualStyleBackColor = true;
-            this.btnEncryptCS.Click    += new System.EventHandler(this.btnEncryptCS_Click);
-
-            this.btnDecryptCS.Location  = new System.Drawing.Point(195, 58);
-            this.btnDecryptCS.Name      = "btnDecryptCS";
-            this.btnDecryptCS.Size      = new System.Drawing.Size(175, 30);
-            this.btnDecryptCS.Font      = new System.Drawing.Font("Microsoft Sans Serif", 8.25f, System.Drawing.FontStyle.Regular);
-            this.btnDecryptCS.Text      = "Descriptografar";
-            this.btnDecryptCS.UseVisualStyleBackColor = true;
-            this.btnDecryptCS.Click    += new System.EventHandler(this.btnDecryptCS_Click);
-
-            // grpApiEncryption
-            this.grpApiEncryption.Controls.Add(this.lblApiEncStatus);
-            this.grpApiEncryption.Controls.Add(this.btnEncryptApi);
-            this.grpApiEncryption.Controls.Add(this.btnDecryptApi);
-            this.grpApiEncryption.Font      = new System.Drawing.Font("Microsoft Sans Serif", 8.25f, System.Drawing.FontStyle.Bold);
-            this.grpApiEncryption.Location  = new System.Drawing.Point(8, 125);
-            this.grpApiEncryption.Name      = "grpApiEncryption";
-            this.grpApiEncryption.Size      = new System.Drawing.Size(834, 105);
-            this.grpApiEncryption.TabIndex  = 1;
-            this.grpApiEncryption.Text      = " Secao: apiConfig ";
-
-            this.lblApiEncStatus.AutoSize  = false;
-            this.lblApiEncStatus.Font      = new System.Drawing.Font("Microsoft Sans Serif", 9f, System.Drawing.FontStyle.Bold);
-            this.lblApiEncStatus.Location  = new System.Drawing.Point(10, 25);
-            this.lblApiEncStatus.Name      = "lblApiEncStatus";
-            this.lblApiEncStatus.Size      = new System.Drawing.Size(810, 20);
-            this.lblApiEncStatus.Text      = "Status: Selecione um arquivo Web.Config";
-
-            this.btnEncryptApi.Location  = new System.Drawing.Point(10, 58);
-            this.btnEncryptApi.Name      = "btnEncryptApi";
-            this.btnEncryptApi.Size      = new System.Drawing.Size(175, 30);
-            this.btnEncryptApi.Font      = new System.Drawing.Font("Microsoft Sans Serif", 8.25f, System.Drawing.FontStyle.Regular);
-            this.btnEncryptApi.Text      = "Criptografar";
-            this.btnEncryptApi.UseVisualStyleBackColor = true;
-            this.btnEncryptApi.Click    += new System.EventHandler(this.btnEncryptApi_Click);
-
-            this.btnDecryptApi.Location  = new System.Drawing.Point(195, 58);
-            this.btnDecryptApi.Name      = "btnDecryptApi";
-            this.btnDecryptApi.Size      = new System.Drawing.Size(175, 30);
-            this.btnDecryptApi.Font      = new System.Drawing.Font("Microsoft Sans Serif", 8.25f, System.Drawing.FontStyle.Regular);
-            this.btnDecryptApi.Text      = "Descriptografar";
-            this.btnDecryptApi.UseVisualStyleBackColor = true;
-            this.btnDecryptApi.Click    += new System.EventHandler(this.btnDecryptApi_Click);
+            // ── btnSalvarOriginal ────────────────────────────────────────────────────
+            this.btnSalvarOriginal.BackColor  = System.Drawing.Color.FromArgb(0, 128, 0);
+            this.btnSalvarOriginal.ForeColor  = System.Drawing.Color.White;
+            this.btnSalvarOriginal.Font       = new System.Drawing.Font("Microsoft Sans Serif", 9f, System.Drawing.FontStyle.Bold);
+            this.btnSalvarOriginal.Location   = new System.Drawing.Point(12, 545);
+            this.btnSalvarOriginal.Name       = "btnSalvarOriginal";
+            this.btnSalvarOriginal.Size       = new System.Drawing.Size(858, 35);
+            this.btnSalvarOriginal.TabIndex   = 3;
+            this.btnSalvarOriginal.Text       = "Salvar no Arquivo Selecionado  (aplica criptografia conforme checkboxes acima)";
+            this.btnSalvarOriginal.UseVisualStyleBackColor = false;
+            this.btnSalvarOriginal.Enabled    = false;
+            this.btnSalvarOriginal.Click     += new System.EventHandler(this.btnSalvarOriginal_Click);
 
             // ── MainForm ─────────────────────────────────────────────────────────────
             this.AutoScaleDimensions  = new System.Drawing.SizeF(6f, 13f);
             this.AutoScaleMode        = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize           = new System.Drawing.Size(882, 643);
+            this.ClientSize           = new System.Drawing.Size(882, 592);
+            this.FormBorderStyle      = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox          = false;
             this.Controls.Add(this.lblFileLabel);
             this.Controls.Add(this.txtConfigPath);
             this.Controls.Add(this.btnBrowse);
+            this.Controls.Add(this.lblTempFileLabel);
+            this.Controls.Add(this.txtTempFile);
             this.Controls.Add(this.tabControl);
-            this.MinimumSize          = new System.Drawing.Size(898, 682);
+            this.Controls.Add(this.btnSalvarOriginal);
+            this.Icon                 = System.Drawing.Icon.ExtractAssociatedIcon(System.Windows.Forms.Application.ExecutablePath);
+            this.MinimumSize          = new System.Drawing.Size(898, 631);
             this.Name                 = "MainForm";
             this.StartPosition        = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text                 = "Config Web  —  Configurador de Web.Config para IIS";
 
             // ── ResumeLayout ─────────────────────────────────────────────────────────
-            this.grpApiEncryption.ResumeLayout(false);
-            this.grpApiEncryption.PerformLayout();
-            this.grpCsEncryption.ResumeLayout(false);
-            this.grpCsEncryption.PerformLayout();
-            this.tabEncryption.ResumeLayout(false);
             this.pnlApiWarning.ResumeLayout(false);
             this.tabApiConfig.ResumeLayout(false);
             this.tabApiConfig.PerformLayout();
@@ -416,10 +358,12 @@ namespace Config_Web
         private System.Windows.Forms.Label    lblFileLabel;
         private System.Windows.Forms.TextBox  txtConfigPath;
         private System.Windows.Forms.Button   btnBrowse;
+        private System.Windows.Forms.Label    lblTempFileLabel;
+        private System.Windows.Forms.TextBox  txtTempFile;
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage  tabConnectionStrings;
         private System.Windows.Forms.TabPage  tabApiConfig;
-        private System.Windows.Forms.TabPage  tabEncryption;
+        private System.Windows.Forms.Button   btnSalvarOriginal;
 
         private System.Windows.Forms.Panel    pnlCsWarning;
         private System.Windows.Forms.Label    lblCsWarning;
@@ -433,7 +377,8 @@ namespace Config_Web
         private System.Windows.Forms.Button   btnAddUpdate;
         private System.Windows.Forms.Button   btnRemove;
         private System.Windows.Forms.Button   btnTestConnection;
-        private System.Windows.Forms.Button   btnSaveCS;
+        private System.Windows.Forms.Button   btnBuilderCS;
+        private System.Windows.Forms.CheckBox chkEncryptCS;
 
         private System.Windows.Forms.Panel    pnlApiWarning;
         private System.Windows.Forms.Label    lblApiWarning;
@@ -441,15 +386,6 @@ namespace Config_Web
         private System.Windows.Forms.TextBox  txtApiKey;
         private System.Windows.Forms.Label    lblApiKeyLength;
         private System.Windows.Forms.Button   btnGenerateKey;
-        private System.Windows.Forms.Button   btnSaveApi;
-
-        private System.Windows.Forms.GroupBox grpCsEncryption;
-        private System.Windows.Forms.Label    lblCsEncStatus;
-        private System.Windows.Forms.Button   btnEncryptCS;
-        private System.Windows.Forms.Button   btnDecryptCS;
-        private System.Windows.Forms.GroupBox grpApiEncryption;
-        private System.Windows.Forms.Label    lblApiEncStatus;
-        private System.Windows.Forms.Button   btnEncryptApi;
-        private System.Windows.Forms.Button   btnDecryptApi;
+        private System.Windows.Forms.CheckBox chkEncryptApi;
     }
 }

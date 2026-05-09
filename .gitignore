@@ -22,3 +22,6 @@ Desktop.ini
 
 # Arquivos de exemplo com dados sensiveis
 Exemplo/
+
+# Artefatos de build do instalador (gerados localmente)
+Output/
