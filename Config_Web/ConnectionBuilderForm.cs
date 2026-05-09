@@ -133,6 +133,60 @@ namespace Config_Web
 
         // ─── Acoes dos botoes ─────────────────────────────────────────────────────
 
+        private void btnTestarConexao_Click(object sender, EventArgs e)
+        {
+            string xml = BuildXml();
+            if (xml == null) return;
+
+            txtPreview.Text = xml;
+
+            ConnectionStringEntry entry = new ConnectionStringEntry
+            {
+                Name             = txtName.Text.Trim(),
+                ConnectionString = ExtractConnectionString(xml),
+                ProviderName     = ExtractProviderName(xml)
+            };
+
+            Cursor = Cursors.WaitCursor;
+            try
+            {
+                DatabaseTestService.Test(entry);
+                MessageBox.Show(
+                    string.Format("Conexao com '{0}' estabelecida com sucesso!", entry.Name),
+                    "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    string.Format("Falha ao conectar:\n\n{0}", ex.Message),
+                    "Falha na Conexao", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        private static string ExtractConnectionString(string xml)
+        {
+            System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
+            doc.LoadXml("<root>" + xml + "</root>");
+            System.Xml.XmlNode node = doc.SelectSingleNode("/root/add");
+            if (node == null || node.Attributes == null) return string.Empty;
+            System.Xml.XmlAttribute attr = node.Attributes["connectionString"];
+            return attr != null ? attr.Value : string.Empty;
+        }
+
+        private static string ExtractProviderName(string xml)
+        {
+            System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
+            doc.LoadXml("<root>" + xml + "</root>");
+            System.Xml.XmlNode node = doc.SelectSingleNode("/root/add");
+            if (node == null || node.Attributes == null) return string.Empty;
+            System.Xml.XmlAttribute attr = node.Attributes["providerName"];
+            return attr != null ? attr.Value : string.Empty;
+        }
+
         private void btnUsar_Click(object sender, EventArgs e)
         {
             string xml = BuildXml();

@@ -50,6 +50,7 @@ namespace Config_Web
             this.grpPreview         = new System.Windows.Forms.GroupBox();
             this.txtPreview         = new System.Windows.Forms.TextBox();
             this.btnGerar           = new System.Windows.Forms.Button();
+            this.btnTestarConexao   = new System.Windows.Forms.Button();
             this.btnUsar            = new System.Windows.Forms.Button();
             this.btnFechar          = new System.Windows.Forms.Button();
 
@@ -226,6 +227,7 @@ namespace Config_Web
             // ────────────────────────────────────────────────────────────────────────
             this.grpPreview.Controls.Add(this.txtPreview);
             this.grpPreview.Controls.Add(this.btnGerar);
+            this.grpPreview.Controls.Add(this.btnTestarConexao);
             this.grpPreview.Location = new System.Drawing.Point(10, 218);
             this.grpPreview.Name     = "grpPreview";
             this.grpPreview.Size     = new System.Drawing.Size(500, 108);
@@ -249,6 +251,14 @@ namespace Config_Web
             this.btnGerar.Text     = "Gerar";
             this.btnGerar.UseVisualStyleBackColor = true;
             this.btnGerar.Click   += new System.EventHandler(this.btnGerar_Click);
+
+            this.btnTestarConexao.Location = new System.Drawing.Point(386, 58);
+            this.btnTestarConexao.Name     = "btnTestarConexao";
+            this.btnTestarConexao.Size     = new System.Drawing.Size(106, 30);
+            this.btnTestarConexao.TabIndex = 2;
+            this.btnTestarConexao.Text     = "Testar Conexao";
+            this.btnTestarConexao.UseVisualStyleBackColor = true;
+            this.btnTestarConexao.Click   += new System.EventHandler(this.btnTestarConexao_Click);
 
             // ── btnUsar ─────────────────────────────────────────────────────────────
             this.btnUsar.BackColor = System.Drawing.Color.FromArgb(0, 122, 204);
@@ -336,6 +346,7 @@ namespace Config_Web
         private System.Windows.Forms.GroupBox  grpPreview;
         private System.Windows.Forms.TextBox   txtPreview;
         private System.Windows.Forms.Button    btnGerar;
+        private System.Windows.Forms.Button    btnTestarConexao;
         private System.Windows.Forms.Button    btnUsar;
         private System.Windows.Forms.Button    btnFechar;
     }
